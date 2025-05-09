@@ -14,6 +14,7 @@ import CulturesAnalysis from "./pages/CulturesAnalysis";
 import Assistant from "./pages/Assistant";
 import Meteo from "./pages/Meteo";
 import Irrigation from "./pages/Irrigation";
+import Profil from "./pages/Profil";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/assistant" element={<Assistant />} />
           <Route path="/meteo" element={<Meteo />} />
           <Route path="/irrigation" element={<Irrigation />} />
+          <Route path="/profil" element={<Profil />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { MapPinIcon, DropletIcon, Info } from "lucide-react";
+import { MapPinIcon, DropletIcon, Info, Leaf } from "lucide-react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -18,11 +18,13 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  Treemap,
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import TerrainDetails from "./TerrainDetails";
+import CustomTabs from "@/components/ui/custom-tabs";
 
-// Données fictives pour les terrains
+// Données fictives pour les terrains avec plus de détails sur les surfaces
 const terrains = [
   {
     id: 1,
@@ -33,9 +35,9 @@ const terrains = [
     rendement: 12.5,
     humidite: 78,
     utilisation: [
-      { name: "Maïs", value: 60 },
-      { name: "Haricots", value: 30 },
-      { name: "Jachère", value: 10 },
+      { name: "Maïs", value: 3.12, percent: 60 },
+      { name: "Haricots", value: 1.56, percent: 30 },
+      { name: "Jachère", value: 0.52, percent: 10 },
     ],
     sante: [
       { mois: "Jan", valeur: 85 },
@@ -74,9 +76,9 @@ const terrains = [
     rendement: 9.2,
     humidite: 65,
     utilisation: [
-      { name: "Tomates", value: 45 },
-      { name: "Oignons", value: 35 },
-      { name: "Jachère", value: 20 },
+      { name: "Tomates", value: 1.71, percent: 45 },
+      { name: "Oignons", value: 1.33, percent: 35 },
+      { name: "Jachère", value: 0.76, percent: 20 },
     ],
     sante: [
       { mois: "Jan", valeur: 70 },
@@ -115,8 +117,8 @@ const terrains = [
     rendement: 7.8,
     humidite: 55,
     utilisation: [
-      { name: "Riz", value: 85 },
-      { name: "Jachère", value: 15 },
+      { name: "Riz", value: 3.83, percent: 85 },
+      { name: "Jachère", value: 0.68, percent: 15 },
     ],
     sante: [
       { mois: "Jan", valeur: 68 },
@@ -155,9 +157,9 @@ const terrains = [
     rendement: 5.4,
     humidite: 42,
     utilisation: [
-      { name: "Sorgho", value: 40 },
-      { name: "Mil", value: 40 },
-      { name: "Jachère", value: 20 },
+      { name: "Sorgho", value: 2.48, percent: 40 },
+      { name: "Mil", value: 2.48, percent: 40 },
+      { name: "Jachère", value: 1.24, percent: 20 },
     ],
     sante: [
       { mois: "Jan", valeur: 60 },
@@ -189,11 +191,40 @@ const terrains = [
   },
 ];
 
+// Préparer les données pour l'affichage par superficie
+const prepareSurfaceData = () => {
+  const surfaceData = [];
+  terrains.forEach(terrain => {
+    terrain.utilisation.forEach(usage => {
+      surfaceData.push({
+        name: `${terrain.nom} - ${usage.name}`,
+        size: usage.value,
+        terrain: terrain.nom,
+        culture: usage.name,
+        value: usage.value,
+        percent: usage.percent,
+        color: usage.name === "Jachère" ? "#795548" : 
+               usage.name === "Maïs" ? "#4CAF50" : 
+               usage.name === "Haricots" ? "#8BC34A" : 
+               usage.name === "Tomates" ? "#FF5722" : 
+               usage.name === "Oignons" ? "#2196F3" : 
+               usage.name === "Riz" ? "#FFC107" : 
+               usage.name === "Sorgho" ? "#9C27B0" : 
+               usage.name === "Mil" ? "#607D8B" : "#9E9E9E"
+      });
+    });
+  });
+  return surfaceData;
+};
+
+const surfaceData = prepareSurfaceData();
+
 const COLORS = ["#4CAF50", "#FFC107", "#FF5722", "#2196F3", "#795548"];
 
 const Terrains = () => {
   const [selectedTerrain, setSelectedTerrain] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState("cards");
 
   // Fonction pour déterminer les classes CSS basées sur l'état du terrain
   const getEtatClasses = (etat: string) => {
@@ -236,66 +267,244 @@ const Terrains = () => {
     setTimeout(() => setSelectedTerrain(null), 300); // Réinitialisez après la fermeture de l'animation
   };
 
+  // Calculer la superficie totale
+  const totalSurface = terrains.reduce((total, terrain) => total + terrain.superficie, 0);
+
+  // Options d'affichage
+  const viewOptions = [
+    { id: "cards", label: "Cartes", icon: <MapPinIcon className="h-4 w-4" /> },
+    { id: "surfaces", label: "Surfaces", icon: <Leaf className="h-4 w-4" /> },
+  ];
+
+  const CustomTreemapContent = ({ root, depth, x, y, width, height, index, name, value, payload, fill }: any) => {
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          style={{
+            fill,
+            stroke: '#fff',
+            strokeWidth: 2,
+            strokeOpacity: 1,
+            opacity: 0.8,
+          }}
+        />
+        {width > 50 && height > 30 ? (
+          <text
+            x={x + width / 2}
+            y={y + height / 2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#fff"
+            fontSize={12}
+            fontWeight={500}
+            stroke="none"
+          >
+            {name.split(' - ')[1]}
+          </text>
+        ) : null}
+        {width > 70 && height > 50 ? (
+          <text
+            x={x + width / 2}
+            y={y + height / 2 + 15}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#fff"
+            fontSize={10}
+            stroke="none"
+          >
+            {`${value.toFixed(2)} ha`}
+          </text>
+        ) : null}
+      </g>
+    );
+  };
+
   return (
     <AppLayout title="Mes Terrains">
       <div className="flex flex-wrap justify-between items-center mb-6">
-        <p className="text-gray-600">Visualisez et gérez vos parcelles agricoles</p>
-        <Button className="bg-agri-green hover:bg-agri-green-dark">
-          <MapPinIcon className="h-4 w-4 mr-2" /> Ajouter une parcelle
-        </Button>
+        <div>
+          <p className="text-gray-600">Visualisez et gérez vos parcelles agricoles</p>
+          <p className="text-sm text-agri-green-dark mt-1">
+            <span className="font-medium">Surface totale:</span> {totalSurface.toFixed(1)} hectares
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <CustomTabs 
+            items={viewOptions} 
+            defaultValue={viewMode} 
+            onChange={setViewMode} 
+            variant="pills"
+            className="mb-2"
+          />
+          <Button className="bg-agri-green hover:bg-agri-green-dark">
+            <MapPinIcon className="h-4 w-4 mr-2" /> Ajouter une parcelle
+          </Button>
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {terrains.map((terrain) => (
-          <Card key={terrain.id} className={`terrain-card transition-all hover:shadow-md`}>
-            <CardContent className="p-5">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-semibold mb-1">{terrain.nom}</h3>
-                  <p className="text-gray-500 text-sm mb-3">{terrain.superficie} hectares</p>
-                </div>
-                <Badge className={getEtatBadgeClasses(terrain.etat)}>
-                  {terrain.etat === "excellent" && "Excellent"}
-                  {terrain.etat === "bon" && "Bon"}
-                  {terrain.etat === "attention" && "Attention"}
-                  {terrain.etat === "critique" && "Critique"}
-                </Badge>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                {terrain.cultures.map((culture, i) => (
-                  <Badge key={i} variant="outline" className="bg-white">
-                    {culture}
+      {viewMode === "cards" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {terrains.map((terrain) => (
+            <Card key={terrain.id} className={`terrain-card transition-all hover:shadow-md`}>
+              <CardContent className="p-5">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">{terrain.nom}</h3>
+                    <p className="text-gray-500 text-sm mb-3">{terrain.superficie} hectares</p>
+                  </div>
+                  <Badge className={getEtatBadgeClasses(terrain.etat)}>
+                    {terrain.etat === "excellent" && "Excellent"}
+                    {terrain.etat === "bon" && "Bon"}
+                    {terrain.etat === "attention" && "Attention"}
+                    {terrain.etat === "critique" && "Critique"}
                   </Badge>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <div className="bg-white bg-opacity-70 p-2 rounded-md text-center">
-                  <p className="text-sm text-gray-600">Rendement</p>
-                  <p className={`font-semibold ${getEtatClasses(terrain.etat)}`}>
-                    {terrain.rendement} t/ha
-                  </p>
                 </div>
-                <div className="bg-white bg-opacity-70 p-2 rounded-md text-center">
-                  <p className="text-sm text-gray-600">Humidité</p>
-                  <p className="font-semibold text-agri-blue-dark">
-                    {terrain.humidite}%
-                  </p>
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {terrain.cultures.map((culture, i) => (
+                    <Badge key={i} variant="outline" className="bg-white">
+                      {culture}
+                    </Badge>
+                  ))}
                 </div>
-              </div>
+                
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="bg-white bg-opacity-70 p-2 rounded-md text-center">
+                    <p className="text-sm text-gray-600">Rendement</p>
+                    <p className={`font-semibold ${getEtatClasses(terrain.etat)}`}>
+                      {terrain.rendement} t/ha
+                    </p>
+                  </div>
+                  <div className="bg-white bg-opacity-70 p-2 rounded-md text-center">
+                    <p className="text-sm text-gray-600">Humidité</p>
+                    <p className="font-semibold text-agri-blue-dark">
+                      {terrain.humidite}%
+                    </p>
+                  </div>
+                </div>
 
-              <Button 
-                variant="outline" 
-                className="w-full border-agri-green text-agri-green hover:bg-agri-green hover:text-white"
-                onClick={() => handleOpenDialog(terrain.id)}
-              >
-                <Info className="h-4 w-4 mr-2" /> Détails du terrain
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Répartition des surfaces</h4>
+                  <div className="h-8 w-full bg-gray-100 rounded-full overflow-hidden flex">
+                    {terrain.utilisation.map((usage, idx) => (
+                      <div 
+                        key={idx} 
+                        className="h-full" 
+                        style={{
+                          width: `${usage.percent}%`, 
+                          backgroundColor: usage.name === "Jachère" ? "#795548" : 
+                                          usage.name === "Maïs" ? "#4CAF50" : 
+                                          usage.name === "Haricots" ? "#8BC34A" : 
+                                          usage.name === "Tomates" ? "#FF5722" : 
+                                          usage.name === "Oignons" ? "#2196F3" : 
+                                          usage.name === "Riz" ? "#FFC107" : 
+                                          usage.name === "Sorgho" ? "#9C27B0" : 
+                                          usage.name === "Mil" ? "#607D8B" : "#9E9E9E"
+                        }}
+                        title={`${usage.name}: ${usage.value.toFixed(2)} ha (${usage.percent}%)`}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                    {terrain.utilisation.map((usage, idx) => (
+                      <div key={idx} className="flex items-center text-xs">
+                        <span 
+                          className="w-3 h-3 rounded-full inline-block mr-1" 
+                          style={{
+                            backgroundColor: usage.name === "Jachère" ? "#795548" : 
+                                            usage.name === "Maïs" ? "#4CAF50" : 
+                                            usage.name === "Haricots" ? "#8BC34A" : 
+                                            usage.name === "Tomates" ? "#FF5722" : 
+                                            usage.name === "Oignons" ? "#2196F3" : 
+                                            usage.name === "Riz" ? "#FFC107" : 
+                                            usage.name === "Sorgho" ? "#9C27B0" : 
+                                            usage.name === "Mil" ? "#607D8B" : "#9E9E9E"
+                          }}
+                        ></span>
+                        <span>{usage.name}: {usage.value.toFixed(2)} ha</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  className="w-full border-agri-green text-agri-green hover:bg-agri-green hover:text-white"
+                  onClick={() => handleOpenDialog(terrain.id)}
+                >
+                  <Info className="h-4 w-4 mr-2" /> Détails du terrain
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="w-full">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold mb-4">Répartition des surfaces par culture</h3>
+            <div className="h-96 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <Treemap
+                  data={surfaceData}
+                  dataKey="value"
+                  aspectRatio={4 / 3}
+                  stroke="#fff"
+                  fill="#8884d8"
+                  content={<CustomTreemapContent />}
+                >
+                  <Tooltip 
+                    formatter={(value: any, name: any, props: any) => {
+                      return [`${props.payload.value.toFixed(2)} ha (${props.payload.percent}%)`, 
+                              `${props.payload.terrain} - ${props.payload.culture}`];
+                    }}
+                  />
+                </Treemap>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3">Légende des cultures</h3>
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-agri-green mr-2"></span>
+                  <span>Maïs</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-[#8BC34A] mr-2"></span>
+                  <span>Haricots</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-agri-red mr-2"></span>
+                  <span>Tomates</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-agri-blue mr-2"></span>
+                  <span>Oignons</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-agri-yellow mr-2"></span>
+                  <span>Riz</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-[#9C27B0] mr-2"></span>
+                  <span>Sorgho</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-[#607D8B] mr-2"></span>
+                  <span>Mil</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-4 h-4 bg-agri-brown mr-2"></span>
+                  <span>Jachère</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Dialogue de détails du terrain utilisant le composant TerrainDetails */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

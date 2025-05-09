@@ -223,24 +223,40 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <h3 className="dashboard-card-title text-center mb-4">Contrôle d'irrigation</h3>
             <div className="flex flex-col items-center justify-between h-64">
-              <div className={`w-32 h-32 rounded-full flex items-center justify-center border-8 ${irrigationActive ? "border-agri-green animate-pulse" : "border-gray-300"}`}>
-                <DropletIcon className={`h-16 w-16 ${irrigationActive ? "text-agri-green" : "text-gray-400"}`} />
+              <div className={`relative w-32 h-32 rounded-full flex items-center justify-center ${irrigationActive ? "bg-agri-blue/10" : "bg-gray-100"}`}>
+                {/* Effet d'eau qui coule quand l'irrigation est active */}
+                {irrigationActive && (
+                  <>
+                    <span className="absolute inset-0 rounded-full border-8 border-agri-blue animate-pulse"></span>
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-full">
+                      <div className="absolute inset-0 animate-pulse-green"></div>
+                    </div>
+                  </>
+                )}
+                <DropletIcon className={`h-16 w-16 z-10 ${irrigationActive ? "text-agri-blue animate-bounce" : "text-gray-400"}`} />
               </div>
-              <p className="text-gray-600 my-4">
+              <p className="text-lg font-medium my-4 text-center">
                 {irrigationActive 
-                  ? "Système d'irrigation actif" 
+                  ? "Irrigation en cours..." 
                   : "Système d'irrigation inactif"}
               </p>
-              <Button
-                onClick={handleIrrigationToggle}
-                className={`w-full ${
-                  irrigationActive
-                    ? "bg-agri-red hover:bg-agri-red-dark"
-                    : "bg-agri-green hover:bg-agri-green-dark"
-                }`}
-              >
-                {irrigationActive ? "Désactiver" : "Activer l'irrigation"}
-              </Button>
+              <div className="w-full">
+                <Button
+                  onClick={handleIrrigationToggle}
+                  className={`w-full text-white ${
+                    irrigationActive
+                      ? "bg-agri-red hover:bg-agri-red-dark"
+                      : "bg-agri-green hover:bg-agri-green-dark"
+                  }`}
+                >
+                  {irrigationActive ? "Désactiver l'irrigation" : "Activer l'irrigation"}
+                </Button>
+                {irrigationActive && (
+                  <p className="text-sm text-agri-blue text-center mt-2">
+                    L'irrigation s'arrêtera automatiquement dans quelques secondes
+                  </p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -3,7 +3,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
   ArrowLeft, Settings, User, Leaf, DropletIcon, CloudRainIcon, MapPinIcon,
-  ChartBarIcon, MessageSquare, Info
+  ChartBarIcon, MessageSquare, LayoutDashboard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -43,7 +43,7 @@ const AppLayout = ({ children, title = "Dashboard" }: AppLayoutProps) => {
   }
 
   const menuItems = [
-    { name: "Tableau de bord", icon: <ChartBarIcon className="h-5 w-5" />, path: "/dashboard" },
+    { name: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, path: "/dashboard" },
     { name: "Mes terrains", icon: <MapPinIcon className="h-5 w-5" />, path: "/terrains" },
     { name: "Irrigation", icon: <DropletIcon className="h-5 w-5" />, path: "/irrigation" },
     { name: "Cultures", icon: <Leaf className="h-5 w-5" />, path: "/cultures" },
