@@ -1,9 +1,10 @@
 
+import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MapPinIcon, DropletIcon, Info } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -19,6 +20,7 @@ import {
   Legend,
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import TerrainDetails from "./TerrainDetails";
 
 // Données fictives pour les terrains
 const terrains = [
@@ -42,6 +44,26 @@ const terrains = [
       { mois: "Avr", valeur: 92 },
       { mois: "Mai", valeur: 89 },
     ],
+    historique: [
+      { mois: "Jan", rendement: 10.2 },
+      { mois: "Fév", rendement: 10.8 },
+      { mois: "Mar", rendement: 11.5 },
+      { mois: "Avr", rendement: 12.1 },
+      { mois: "Mai", rendement: 12.5 },
+    ],
+    nutriments: [
+      { type: "Azote", valeur: 75 },
+      { type: "Phosphore", valeur: 60 },
+      { type: "Potassium", valeur: 85 },
+      { type: "Calcium", valeur: 70 },
+      { type: "Magnésium", valeur: 65 },
+    ],
+    irrigation: [
+      { zone: "Zone Nord", niveau: 80 },
+      { zone: "Zone Sud", niveau: 65 },
+      { zone: "Zone Est", niveau: 45 },
+      { zone: "Zone Ouest", niveau: 75 },
+    ],
   },
   {
     id: 2,
@@ -63,6 +85,26 @@ const terrains = [
       { mois: "Avr", valeur: 82 },
       { mois: "Mai", valeur: 80 },
     ],
+    historique: [
+      { mois: "Jan", rendement: 8.0 },
+      { mois: "Fév", rendement: 8.4 },
+      { mois: "Mar", rendement: 8.7 },
+      { mois: "Avr", rendement: 9.0 },
+      { mois: "Mai", rendement: 9.2 },
+    ],
+    nutriments: [
+      { type: "Azote", valeur: 60 },
+      { type: "Phosphore", valeur: 55 },
+      { type: "Potassium", valeur: 70 },
+      { type: "Calcium", valeur: 65 },
+      { type: "Magnésium", valeur: 60 },
+    ],
+    irrigation: [
+      { zone: "Zone Nord", niveau: 70 },
+      { zone: "Zone Sud", niveau: 55 },
+      { zone: "Zone Est", niveau: 60 },
+      { zone: "Zone Ouest", niveau: 65 },
+    ],
   },
   {
     id: 3,
@@ -82,6 +124,26 @@ const terrains = [
       { mois: "Mar", valeur: 60 },
       { mois: "Avr", valeur: 65 },
       { mois: "Mai", valeur: 75 },
+    ],
+    historique: [
+      { mois: "Jan", rendement: 7.2 },
+      { mois: "Fév", rendement: 7.0 },
+      { mois: "Mar", rendement: 6.8 },
+      { mois: "Avr", rendement: 7.3 },
+      { mois: "Mai", rendement: 7.8 },
+    ],
+    nutriments: [
+      { type: "Azote", valeur: 45 },
+      { type: "Phosphore", valeur: 40 },
+      { type: "Potassium", valeur: 55 },
+      { type: "Calcium", valeur: 50 },
+      { type: "Magnésium", valeur: 45 },
+    ],
+    irrigation: [
+      { zone: "Zone Nord", niveau: 55 },
+      { zone: "Zone Sud", niveau: 50 },
+      { zone: "Zone Est", niveau: 40 },
+      { zone: "Zone Ouest", niveau: 60 },
     ],
   },
   {
@@ -104,12 +166,35 @@ const terrains = [
       { mois: "Avr", valeur: 45 },
       { mois: "Mai", valeur: 55 },
     ],
+    historique: [
+      { mois: "Jan", rendement: 5.8 },
+      { mois: "Fév", rendement: 5.5 },
+      { mois: "Mar", rendement: 5.2 },
+      { mois: "Avr", rendement: 5.0 },
+      { mois: "Mai", rendement: 5.4 },
+    ],
+    nutriments: [
+      { type: "Azote", valeur: 30 },
+      { type: "Phosphore", valeur: 25 },
+      { type: "Potassium", valeur: 35 },
+      { type: "Calcium", valeur: 40 },
+      { type: "Magnésium", valeur: 30 },
+    ],
+    irrigation: [
+      { zone: "Zone Nord", niveau: 45 },
+      { zone: "Zone Sud", niveau: 35 },
+      { zone: "Zone Est", niveau: 30 },
+      { zone: "Zone Ouest", niveau: 40 },
+    ],
   },
 ];
 
 const COLORS = ["#4CAF50", "#FFC107", "#FF5722", "#2196F3", "#795548"];
 
 const Terrains = () => {
+  const [selectedTerrain, setSelectedTerrain] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // Fonction pour déterminer les classes CSS basées sur l'état du terrain
   const getEtatClasses = (etat: string) => {
     switch (etat) {
@@ -139,6 +224,16 @@ const Terrains = () => {
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const handleOpenDialog = (terrainId: number) => {
+    setSelectedTerrain(terrainId);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setTimeout(() => setSelectedTerrain(null), 300); // Réinitialisez après la fermeture de l'animation
   };
 
   return (
@@ -190,98 +285,29 @@ const Terrains = () => {
                 </div>
               </div>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full border-agri-green text-agri-green hover:bg-agri-green hover:text-white">
-                    <Info className="h-4 w-4 mr-2" /> Détails du terrain
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl">
-                  <DialogHeader>
-                    <DialogTitle>{terrain.nom} - {terrain.superficie} hectares</DialogTitle>
-                  </DialogHeader>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Utilisation des terres */}
-                    <Card>
-                      <CardContent className="p-4">
-                        <h4 className="font-semibold mb-3">Utilisation des terres</h4>
-                        <div className="h-64">
-                          <ChartContainer config={{ 
-                            mais: { label: "Maïs", theme: { light: "#4CAF50", dark: "#2E7D32" } },
-                            tomates: { label: "Tomates", theme: { light: "#FF5722", dark: "#D32F2F" } },
-                            riz: { label: "Riz", theme: { light: "#FFC107", dark: "#FFA000" } },
-                            oignons: { label: "Oignons", theme: { light: "#2196F3", dark: "#1976D2" } },
-                            sorgho: { label: "Sorgho", theme: { light: "#9C27B0", dark: "#7B1FA2" } },
-                            haricots: { label: "Haricots", theme: { light: "#009688", dark: "#00796B" } },
-                            mil: { label: "Mil", theme: { light: "#607D8B", dark: "#455A64" } },
-                            jachere: { label: "Jachère", theme: { light: "#795548", dark: "#5D4037" } },
-                          }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
-                                <Pie
-                                  data={terrain.utilisation}
-                                  cx="50%"
-                                  cy="50%"
-                                  labelLine={false}
-                                  outerRadius={80}
-                                  fill="#8884d8"
-                                  dataKey="value"
-                                  nameKey="name"
-                                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                >
-                                  {terrain.utilisation.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                  ))}
-                                </Pie>
-                                <ChartTooltip content={<ChartTooltipContent />} />
-                              </PieChart>
-                            </ResponsiveContainer>
-                          </ChartContainer>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    {/* Santé des cultures */}
-                    <Card>
-                      <CardContent className="p-4">
-                        <h4 className="font-semibold mb-3">Indice de santé des cultures</h4>
-                        <div className="h-64">
-                          <ChartContainer config={{ 
-                            valeur: { label: "Indice de santé", theme: { light: "#4CAF50", dark: "#2E7D32" } },
-                          }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={terrain.sante}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="mois" />
-                                <YAxis domain={[0, 100]} />
-                                <ChartTooltip content={<ChartTooltipContent />} />
-                                <Legend />
-                                <Bar dataKey="valeur" name="Indice de santé" fill="#4CAF50" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </ChartContainer>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  
-                  <div className="mt-4 flex flex-wrap gap-4">
-                    <Button className="bg-agri-green hover:bg-agri-green-dark">
-                      <MapPinIcon className="h-4 w-4 mr-2" />
-                      Voir sur la carte
-                    </Button>
-                    <Button variant="outline" className="border-agri-blue text-agri-blue hover:bg-agri-blue hover:text-white">
-                      <DropletIcon className="h-4 w-4 mr-2" />
-                      Gérer l'irrigation
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <Button 
+                variant="outline" 
+                className="w-full border-agri-green text-agri-green hover:bg-agri-green hover:text-white"
+                onClick={() => handleOpenDialog(terrain.id)}
+              >
+                <Info className="h-4 w-4 mr-2" /> Détails du terrain
+              </Button>
             </CardContent>
           </Card>
         ))}
       </div>
+      
+      {/* Dialogue de détails du terrain utilisant le composant TerrainDetails */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-5xl">
+          {selectedTerrain && (
+            <TerrainDetails 
+              terrain={terrains.find(t => t.id === selectedTerrain)!} 
+              onClose={handleCloseDialog}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };

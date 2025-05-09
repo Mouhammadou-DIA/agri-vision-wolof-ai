@@ -10,6 +10,7 @@ import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
 import Terrains from "./pages/Terrains";
 import Cultures from "./pages/Cultures";
+import CulturesAnalysis from "./pages/CulturesAnalysis";
 import Assistant from "./pages/Assistant";
 import Meteo from "./pages/Meteo";
 import Irrigation from "./pages/Irrigation";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/terrains" element={<Terrains />} />
           <Route path="/cultures" element={<Cultures />} />
+          <Route path="/cultures/analyse" element={<CulturesAnalysis />} />
           <Route path="/assistant" element={<Assistant />} />
           <Route path="/meteo" element={<Meteo />} />
           <Route path="/irrigation" element={<Irrigation />} />
