@@ -17,6 +17,7 @@ import Irrigation from "./pages/Irrigation";
 import Profil from "./pages/Profil";
 import Parametres from "./pages/Parametres";
 import NotFound from "./pages/NotFound";
+import { SidebarProvider } from "./components/ui/sidebar";
 
 const queryClient = new QueryClient();
 
@@ -26,22 +27,24 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/terrains" element={<Terrains />} />
-          <Route path="/cultures" element={<Cultures />} />
-          <Route path="/cultures/analyse" element={<CulturesAnalysis />} />
-          <Route path="/assistant" element={<Assistant />} />
-          <Route path="/meteo" element={<Meteo />} />
-          <Route path="/irrigation" element={<Irrigation />} />
-          <Route path="/profil" element={<Profil />} />
-          <Route path="/parametres" element={<Parametres />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <SidebarProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/terrains" element={<Terrains />} />
+            <Route path="/cultures" element={<Cultures />} />
+            <Route path="/cultures/analyse" element={<CulturesAnalysis />} />
+            <Route path="/assistant" element={<Assistant />} />
+            <Route path="/meteo" element={<Meteo />} />
+            <Route path="/irrigation" element={<Irrigation />} />
+            <Route path="/profil" element={<Profil />} />
+            <Route path="/parametres" element={<Parametres />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </SidebarProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
