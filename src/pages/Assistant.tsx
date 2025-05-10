@@ -3,7 +3,8 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Assistant = () => {
   return (
@@ -52,6 +53,31 @@ const Assistant = () => {
                   >
                     Comment optimiser mon irrigation pendant la saison sèche?
                   </Button>
+                </div>
+                
+                {/* Boutons de connexion */}
+                <div className="mt-4">
+                  <p className="text-xs font-medium text-gray-500 mb-2">
+                    Accédez à toutes les fonctionnalités:
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button 
+                      className="bg-agri-green hover:bg-agri-green-dark flex items-center gap-2"
+                      as={Link}
+                      to="/login"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Connexion
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-agri-green text-agri-green hover:bg-agri-green hover:text-white"
+                      as={Link}
+                      to="/register"
+                    >
+                      Créer un compte
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
