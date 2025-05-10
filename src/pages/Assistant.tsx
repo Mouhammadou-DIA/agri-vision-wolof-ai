@@ -3,8 +3,9 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Send, LogIn } from "lucide-react";
+import { MessageSquare, Send, LogIn, QrCode } from "lucide-react";
 import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 
 const Assistant = () => {
   return (
@@ -53,6 +54,24 @@ const Assistant = () => {
                   >
                     Comment optimiser mon irrigation pendant la saison sèche?
                   </Button>
+                </div>
+                
+                {/* Code QR pour notre application */}
+                <div className="mt-4 flex flex-col items-center">
+                  <div className="flex items-center gap-2 mb-3">
+                    <QrCode className="h-5 w-5 text-agri-green" />
+                    <p className="text-sm font-medium">Scannez pour télécharger l'application</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg border border-gray-200">
+                    <QRCodeSVG 
+                      value="https://agri-vision-wolof-ai.lovable.dev" 
+                      size={150} 
+                      bgColor={"#ffffff"} 
+                      fgColor={"#2E7D32"} 
+                      level={"L"} 
+                      includeMargin={true} 
+                    />
+                  </div>
                 </div>
                 
                 {/* Boutons de connexion */}
