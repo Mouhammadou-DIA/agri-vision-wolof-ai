@@ -8,28 +8,28 @@ const Index = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-white px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-white px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-4">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-green-800 mb-3">
             AgriVision
           </h1>
-          <p className="text-base md:text-lg text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             Plateforme intelligente pour l'optimisation de la production agricole
           </p>
         </div>
         
-        <div className="space-y-4 mb-10">
+        <div className="space-y-4 mb-8">
           <Card className="bg-gradient-to-br from-white to-green-50 shadow-md border-green-200 hover:shadow-lg transition-all">
-            <CardContent className="p-4 md:p-6">
-              <div className="h-20 flex items-center justify-center text-green-600 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <CardContent className="p-4">
+              <div className="h-16 md:h-20 flex items-center justify-center text-green-600 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                   <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold mb-2 text-green-800">Pour les Agriculteurs</h2>
-              <p className="text-gray-600 mb-4 text-sm md:text-base">Optimisez votre production et gérez vos cultures efficacement.</p>
+              <h2 className="text-lg md:text-xl font-semibold mb-2 text-green-800">Pour les Agriculteurs</h2>
+              <p className="text-gray-600 mb-4 text-xs md:text-sm">Optimisez votre production et gérez vos cultures efficacement.</p>
               <Button 
                 variant="outline" 
                 className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
@@ -41,11 +41,11 @@ const Index = () => {
           </Card>
         </div>
         
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           <Button 
             variant="default" 
             size="lg"
-            className="bg-green-600 hover:bg-green-700 w-full"
+            className="bg-green-600 hover:bg-green-700 w-full py-5 md:py-6 text-base"
             onClick={() => navigate("/login")}
           >
             Se connecter
@@ -53,7 +53,7 @@ const Index = () => {
           <Button 
             variant="outline" 
             size="lg"
-            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-full"
+            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-full py-5 md:py-6 text-base"
             onClick={() => navigate("/register")}
           >
             Créer un compte
@@ -61,7 +61,7 @@ const Index = () => {
         </div>
       </div>
       
-      <footer className="w-full mt-12 py-4 px-4 text-center text-gray-500 text-sm">
+      <footer className="w-full mt-8 py-4 px-4 text-center text-gray-500 text-xs md:text-sm">
         <p>© 2025 AgriVision - Plateforme pour l'optimisation de la production agricole</p>
       </footer>
     </div>

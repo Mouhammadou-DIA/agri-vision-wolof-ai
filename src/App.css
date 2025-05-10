@@ -1,42 +1,76 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@layer components {
+  .dashboard-card {
+    @apply border border-gray-200 shadow-sm hover:shadow-md transition-shadow;
+  }
+  
+  .dashboard-card-title {
+    @apply text-base md:text-lg font-medium text-gray-700 mb-1;
+  }
+  
+  /* Mobile optimized components */
+  .mobile-nav-link {
+    @apply flex items-center px-4 py-3 text-sm font-medium rounded-md;
+  }
+  
+  .mobile-nav-link-active {
+    @apply bg-green-100 text-green-700;
+  }
+  
+  .mobile-nav-link-inactive {
+    @apply text-gray-700 hover:bg-gray-100;
+  }
+  
+  .mobile-card {
+    @apply border rounded-lg bg-white shadow-sm p-3 md:p-4;
+  }
+  
+  .mobile-header {
+    @apply text-lg font-semibold mb-2;
   }
 }
 
-.card {
-  padding: 2em;
+/* Animation for water drop */
+@keyframes pulse-green {
+  0% { background-color: rgba(52, 211, 153, 0.1); }
+  50% { background-color: rgba(52, 211, 153, 0.3); }
+  100% { background-color: rgba(52, 211, 153, 0.1); }
 }
 
-.read-the-docs {
-  color: #888;
+.animate-pulse-green {
+  animation: pulse-green 2s infinite;
+}
+
+/* Colors for the application */
+:root {
+  --agri-green: #22c55e;
+  --agri-green-dark: #16a34a;
+  --agri-yellow: #facc15;
+  --agri-yellow-dark: #ca8a04;
+  --agri-blue: #3b82f6;
+  --agri-blue-dark: #2563eb;
+  --agri-brown: #a16207;
+  --agri-brown-dark: #854d0e;
+  --agri-red: #ef4444;
+  --agri-red-dark: #dc2626;
 }

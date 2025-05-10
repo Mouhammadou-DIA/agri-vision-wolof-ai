@@ -1,5 +1,4 @@
-
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   MapPin,
@@ -28,10 +27,13 @@ import {
   SidebarSeparator,
   SidebarTrigger
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppSidebar() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useIsMobile();
   
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -54,6 +56,53 @@ export function AppSidebar() {
     { name: "Paramètres", icon: <Settings className="h-5 w-5" />, path: "/parametres" },
   ];
 
+  // Mobile sidebar is simplified
+  if (isMobile) {
+    return (
+      <div className="flex h-full flex-col bg-white">
+        <div className="flex items-center p-4 border-b">
+          <Link to="/dashboard" className="flex items-center">
+            <Leaf className="h-6 w-6 text-green-600 mr-2" />
+            <h1 className="text-xl font-semibold text-green-800">AgriVision</h1>
+          </Link>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto py-2">
+          <nav className="space-y-1 px-2">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex items-center px-3 py-3 text-sm font-medium rounded-md ${
+                    isActive
+                      ? "bg-green-100 text-green-700"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+        
+        <div className="border-t p-4">
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
+          >
+            <LogOut className="h-5 w-5 mr-3" />
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop sidebar remains the same
   return (
     <Sidebar>
       <SidebarHeader>
@@ -76,7 +125,7 @@ export function AppSidebar() {
                   <SidebarMenuButton 
                     asChild 
                     tooltip={item.name}
-                    isActive={window.location.pathname === item.path}
+                    isActive={location.pathname === item.path}
                   >
                     <Link to={item.path}>
                       {item.icon}
