@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { registerRootComponent } from 'expo';
 
-// Create root and render
+// Create root and render for web
 const rootElement = document.getElementById("root");
 if (rootElement) {
   const root = createRoot(rootElement);
