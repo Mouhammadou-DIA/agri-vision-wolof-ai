@@ -61,22 +61,22 @@ const Assistant = () => {
                     Accédez à toutes les fonctionnalités:
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button 
-                      className="bg-agri-green hover:bg-agri-green-dark flex items-center gap-2"
-                      as={Link}
-                      to="/login"
-                    >
-                      <LogIn className="h-4 w-4" />
-                      Connexion
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="border-agri-green text-agri-green hover:bg-agri-green hover:text-white"
-                      as={Link}
-                      to="/register"
-                    >
-                      Créer un compte
-                    </Button>
+                    <Link to="/login">
+                      <Button 
+                        className="bg-agri-green hover:bg-agri-green-dark flex items-center gap-2 w-full"
+                      >
+                        <LogIn className="h-4 w-4" />
+                        Connexion
+                      </Button>
+                    </Link>
+                    <Link to="/register">
+                      <Button 
+                        variant="outline"
+                        className="border-agri-green text-agri-green hover:bg-agri-green hover:text-white w-full"
+                      >
+                        Créer un compte
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
